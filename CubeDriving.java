@@ -56,7 +56,7 @@ public class CubeDriving extends OpMode {
     public DcMotor  MotorRightBack  = null;
     public DcMotor  HookUpDown = null;
     public double TimeToGetDown = 1.0;
-
+    public int i=0;
     public double midpixX =146;
     public double leftspeed=0.6;
     public double rightspeed=0.6;
@@ -99,7 +99,7 @@ public class CubeDriving extends OpMode {
         goldVision.setShowCountours(true);
         // get a list of contours from the vision system
         List<MatOfPoint> contours = goldVision.getContours();
-        for (int i = 0; i < contours.size(); i++) {
+        while ( i < contours.size()) {
             AllWheelsPower(leftspeed,rightspeed);
             Rect boundingRect = Imgproc.boundingRect(contours.get(i));
             if(boundingRect.x>midpixX){
@@ -114,6 +114,7 @@ public class CubeDriving extends OpMode {
                 rightspeed=0.6;
                 leftspeed=0.6;
             }
+            i++;
         }
     }
 
