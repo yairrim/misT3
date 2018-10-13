@@ -57,7 +57,7 @@ public class CubeDriving extends OpMode {
     public DcMotor  HookUpDown = null;
     public double TimeToGetDown = 1.0;
     public int i=0;
-    public double midpixX =146;
+    public double midpixX =216;
     public double leftspeed=0.6;
     public double rightspeed=0.6;
 
