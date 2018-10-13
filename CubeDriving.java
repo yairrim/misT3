@@ -102,17 +102,23 @@ public class CubeDriving extends OpMode {
         while ( i < contours.size()) {
             AllWheelsPower(leftspeed,rightspeed);
             Rect boundingRect = Imgproc.boundingRect(contours.get(i));
-            if(boundingRect.x>midpixX){
+            if (((boundingRect.x + boundingRect.width) / 2) < midpixX){
+                telemetry.addData("need","left");
+                telemetry.update();
                 leftspeed=0.7;
                 rightspeed=0.6;
             }
-            if (boundingRect.x<midpixX){
+            if (((boundingRect.x + boundingRect.width) / 2) > midpixX){
+                telemetry.addData("need","right");
+                telemetry.update();
+                leftspeed=0.6;
                 rightspeed=0.7;
-                leftspeed=0.6;
             }
-            if (boundingRect.x==midpixX){
-                rightspeed=0.6;
+            if (((boundingRect.x + boundingRect.width) / 2) == midpixX){
+                telemetry.addData("need","right");
+                telemetry.update();
                 leftspeed=0.6;
+                rightspeed=0.6;
             }
             i++;
         }
