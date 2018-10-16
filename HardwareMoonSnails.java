@@ -52,12 +52,8 @@ public class HardwareMoonSnails
     private ElapsedTime period  = new ElapsedTime();
     private ElapsedTime     runtime = new ElapsedTime();
 
-
-
     /* Constructor */
-    public HardwareMoonSnails(){
-
-    }
+    public HardwareMoonSnails() {}
 
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
@@ -122,6 +118,5 @@ public class HardwareMoonSnails
         }
         HookUpDown.setPower(0);
     }
-
 }
 
