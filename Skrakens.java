@@ -194,6 +194,7 @@ public class Skrakens extends LinearOpMode {
         double steer;
         double leftSpeed;
         double rightSpeed;
+        distance=distance/3.5;
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
