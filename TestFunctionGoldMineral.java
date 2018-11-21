@@ -28,12 +28,8 @@
  */
 
 package org.firstinspires.ftc.teamcode;
-
-import android.hardware.Camera;
-
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -48,7 +44,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.Came
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
-import java.lang.annotation.Target;
 import java.util.List;
 
 /**
@@ -61,9 +56,8 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "AutoKrakens", group = "Krakens")
-
-public class AutoKrakens extends LinearOpMode {
+@TeleOp(name = "TestFunctionGoldMineral", group = "Krakens")
+public class TestFunctionGoldMineral extends LinearOpMode {
     HardwareKrakens robot = new HardwareKrakens();
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
@@ -80,8 +74,6 @@ public class AutoKrakens extends LinearOpMode {
     int silverMineral1X = -1;
     int silverMineral2X = -1;
     int silver1x = -1;
-
-
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
      * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
@@ -94,7 +86,7 @@ public class AutoKrakens extends LinearOpMode {
      * Once you've obtained a license key, copy the string from the Vuforia web site
      * and paste it in to your code on the next line, between the double quotes.
      */
-    private static final String VUFORIA_KEY = "AT1b7PX/////AAABmYZ2XqMzL0R1vxYxgIeZFeNORKVtG16iSZUsEiooP3LWZplZ2+L+2NzpSUvaQuKt7ZRafe/aXF1XBS5GjfBrT+YBfYgdtyD5Y660jyOghwF/jBX2NTAv9rgZQNG65RWXJvwty06jja39pVY6GxCcPl+Q5GwikRVhenpwaalHP8zsguWpOT5z+NiaW7KR3g0YQKwy6J/YQblwzsky7Czc8bu7GS5c8b/OTZ6FLweIS0g0c712n/PJdiWomk2W7Xq4DQfGMD9eR/0BCuPy4UxXTGjKIjMgEr/DS1tw1fnB+pmKZTUP4nZ7brOHLywh6Kgk2dHMJ1/p4L1objTxYI+wiSzdJ/yPOti9KSk3qp58pKga";
+    private static final String VUFORIA_KEY = "AS8eG1D/////AAABmX48aAq78EHqo6ydKng94/FbHwnQDn1IzrimDYhxOoE71bLZBHIqJVuXSnzlk7QCiVGgw9m+vUNJwBhvlcsMIgFm3kZ1xzZ75yW9WMgYim/dNvB4ku54BlppUz/6E1od3CJE0LjheC1aRX+FddticX8gnCF4hgfWM9vPTNFv8LTr2nhLDju+pGEBr2Vq9mc9Lzu4nfHT/8VWwjo8iBGx8z5hoTg+x94sgqOcdJjv1lx5XFmW+q6w45rtJrv41fOBTZ7xJIZ60t8ztt5IP868y1h2QRIUiorzZQQevkBlP/vn39kjrhqLfagfcVZ10gmI2zR+/ZLugk5qs1Zzh4jQRKXCMr77m0TWbROUtPMJIQIx";
 
     private VuforiaLocalizer vuforia;
 
@@ -144,37 +136,21 @@ public class AutoKrakens extends LinearOpMode {
         }
 
         /** Wait for the game to begin */
-        while (!isStarted()){
-            telemetry.addData("angle",getGyroAngle());
+        telemetry.addData(">", "Press Play to start tracking");
+        telemetry.update();
+        waitForStart();
+        GoldRun();
+        while (opModeIsActive()) {
+            telemetry.addData("finish", "finish");
+            telemetry.addData("pos", GoldMineralPosition);
+            telemetry.addData("gold",goldMineralX);
+            telemetry.addData("silver1",silverMineral1X);
+            telemetry.addData("silver2",silverMineral2X);
             telemetry.update();
         }
-        if (opModeIsActive()) {
-            activetime.reset();
-            while (opModeIsActive()) {
-                GoldRun();
-                telemetry.addData("finish","GoldRun();");
-                telemetry.update();
-                while (activetime.seconds()<15){
-                    telemetry.addData("pos",GoldMineralPosition);
-                    telemetry.update();
-                }
-                ArmUp(ArmSpeed);
-                while(activetime.seconds()<35){
-                    //ArmForWard(ArmSpeed);
-                    gyroDrive(0.5,17,0);
-                    ArmDown(ArmSpeed);
-                    MineralIn();
-                    ArmUp(ArmSpeed);
-                    //ArmBackWard(0.4);
-                    gyroDrive(0.5,-80,0);
-                    MineralOut();
-                    gyroDrive(0.5,80,0);
-                }
-                gyroDrive(0.6,80,0);
-            }
-            telemetry.update();
+        if (tfod != null) {
+            tfod.shutdown();
         }
-
     }
 
 
@@ -563,17 +539,14 @@ public class AutoKrakens extends LinearOpMode {
                                 if (goldMineralX < silver1x) {
                                     telemetry.addData("Gold Mineral Position", "Right");
                                     GoldMineralPosition = "C";
-                                    posC();
                                 } else if (goldMineralX > silver1x) {
                                     telemetry.addData("Gold Mineral Position", "Left");
                                     GoldMineralPosition = "L";
-                                    posL();
                                 }
                             }
                             else{
                                 telemetry.addData("Gold Mineral Position", "Right");
                                 GoldMineralPosition="R";
-                                posR();
                             }
                             if(goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1){
                                 telemetry.addData("you are dumb", "Need 3 object detection");

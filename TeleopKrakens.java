@@ -60,7 +60,10 @@ public class TeleopKrakens extends LinearOpMode {
         double LeftSpeed;
         double RightSpeed;
         boolean reverse =false;
-
+        double cPower =0;
+        double ePower;
+        double udPower;
+        double maxPower=0.5;
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
@@ -74,6 +77,7 @@ public class TeleopKrakens extends LinearOpMode {
         robot.MotorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.ArmUpDown2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.ArmUpDown.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
@@ -83,6 +87,9 @@ public class TeleopKrakens extends LinearOpMode {
             LeftSpeed = -gamepad1.left_stick_y;
             RightSpeed = -gamepad1.right_stick_y;
 
+            cPower = gamepad2.left_trigger-gamepad2.right_trigger;
+            ePower=gamepad2.left_stick_y;
+            udPower=gamepad2.right_stick_y;
             if(gamepad1.dpad_down){
                 reverse=true;
             }
@@ -104,8 +111,8 @@ public class TeleopKrakens extends LinearOpMode {
             telemetry.addData("lefy 2",gamepad2.left_stick_y);
             telemetry.addData("dpad_up 2",gamepad2.dpad_up);
             telemetry.addData("dpad_down 2",gamepad2.dpad_down);
+            telemetry.addData("cPower",cPower);
             telemetry.update();
-            robot.AllWheelsPower(LeftSpeed,RightSpeed);
             if (gamepad2.dpad_up) {
 
                 robot.ArmDistance.setPower(-0.7);
@@ -114,30 +121,62 @@ public class TeleopKrakens extends LinearOpMode {
 
                 robot.ArmDistance.setPower(0.7);
             }
+
             if(!gamepad2.dpad_down && !gamepad2.dpad_up) {
 
                 robot.ArmDistance.setPower(0);
             }
 
+
             if(gamepad1.dpad_left){
                 robot.IdDropper.setPosition(robot.IdDropper.getPosition()+1);
             }
-            if(gamepad1.dpad_right){
-                robot.IdDropper.setPosition(robot.IdDropper.getPosition()-1);
-            }
-            if(gamepad1.right_bumper){
-                robot.C2.setPower(1);
-            }
-            if(gamepad1.left_bumper){
-                robot.C2.setPower(-1);
-            }
-            if(gamepad1.left_bumper && gamepad1.right_bumper) {
-                robot.C2.setPower(0);
+            if(gamepad1.dpad_right) {
+                robot.IdDropper.setPosition(robot.IdDropper.getPosition() - 1);
             }
 
-            robot.collector.setPower(gamepad2.left_trigger-gamepad2.right_trigger);
-            robot.ArmUpDown.setPower(gamepad2.right_stick_y);
-            robot.ArmUpDown2.setPower(gamepad2.right_stick_y);
+            if(gamepad2.dpad_left){
+                robot.blocker.setPosition(robot.IdDropper.getPosition()+1);
+            }
+            if(gamepad2.dpad_right) {
+                robot.blocker.setPosition(robot.IdDropper.getPosition() - 1);
+            }
+            if(ePower<-0.3){
+                ePower=-0.3;
+            }
+            if(ePower>0.3){
+                ePower=0.3;
+            }
+            if(udPower<-0.3){
+                udPower=-0.3;
+            }
+            if(udPower>0.3){
+                udPower=0.3;
+            }
+            if(LeftSpeed<-maxPower){
+                LeftSpeed=-0.5;
+            }
+            if(LeftSpeed>maxPower){
+                LeftSpeed=0.5;
+            }
+            if(RightSpeed<-maxPower){
+                RightSpeed=-0.5;
+            }
+            if(RightSpeed>maxPower){
+                RightSpeed=0.5;
+            }
+            if(gamepad1.right_bumper){
+                maxPower=maxPower+0.1;
+            }
+            if(gamepad1.left_bumper){
+                maxPower=maxPower-0.1;
+            }
+            robot.c.setPower(cPower);
+            robot.Elbow.setPower(ePower);
+            robot.ArmUpDown.setPower(udPower);
+            robot.ArmUpDown2.setPower(udPower);
+            robot.AllWheelsPower(LeftSpeed,RightSpeed);
+            robot.ArmMotor.setPower((gamepad2.right_stick_x));
             // Pause for 40 mS each cycle = update 25 times a second.
             sleep(40);
         }

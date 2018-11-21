@@ -31,8 +31,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -48,14 +49,14 @@ public class HardwareKrakens
     /* Public OpMode members. */
     public DcMotor  MotorLeftFront   = null;
     public DcMotor  MotorRightFront  = null;
-    public Servo IdDropper =null;
     public DcMotor  ArmUpDown        = null;
-    public DcMotor C2;
-
+    public DcMotor c=null;
+    public DcMotor Elbow =null;
     public DcMotor  ArmDistance      = null;
-
+    public DcMotor ArmMotor = null;
     public DcMotor  ArmUpDown2      = null;
-    public DcMotor collector = null;
+    public Servo blocker =null;
+    public Servo IdDropper =null;
 
     BNO055IMU imu;
 
@@ -90,20 +91,18 @@ public class HardwareKrakens
         ArmUpDown       =hwMap.get(DcMotor.class,"aud");//port 3 rev 1
         ArmDistance     = hwMap.get(DcMotor.class, "ad");//port 0 rev 2
         ArmUpDown2     = hwMap.get(DcMotor.class, "aud2");//port 0 rev 1
-        C2=hwMap.get(DcMotor.class,"c2");//port 2 rev 1
-
-
+        Elbow=hwMap.get(DcMotor.class,"ed");//port 2 rev 1
+        c=hwMap.get(DcMotor.class,"s");//port 1 rev 1
+        ArmMotor=hwMap.get(DcMotor.class,"am");
         imu = hwMap.get(BNO055IMU.class, "imu");//gyro/imu in rev
         imu.initialize(parameters);
 
-        MotorLeftFront.setDirection(DcMotor.Direction.REVERSE);
-        MotorRightFront.setDirection(DcMotor.Direction.FORWARD);
+        MotorLeftFront.setDirection(DcMotor.Direction.FORWARD);
+        MotorRightFront.setDirection(DcMotor.Direction.REVERSE);
         ArmUpDown.setDirection(DcMotor.Direction.FORWARD);
         ArmDistance.setDirection(DcMotor.Direction.FORWARD);
         ArmUpDown2.setDirection(DcMotor.Direction.REVERSE);
-
-        collector.setDirection(DcMotor.Direction.FORWARD);
-
+        c.setDirection(DcMotor.Direction.FORWARD);
 
 
 
@@ -112,14 +111,14 @@ public class HardwareKrakens
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         MotorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         MotorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        c.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         ArmUpDown.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         ArmDistance.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         ArmUpDown2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        collector.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        ArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         IdDropper =hwMap.get(Servo.class,"id");
+        blocker =hwMap.get(Servo.class,"bl");
 
     }
     public void AllWheelsPower(double LeftMotorPower,double RightMotorPower){
@@ -135,5 +134,7 @@ public class HardwareKrakens
         }
     }
 
+    public void GotoPosition(){
+    }
 }
 
